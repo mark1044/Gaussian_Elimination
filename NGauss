@@ -1,0 +1,61 @@
+
+% Mark S. Melendez
+%hw one
+
+
+function x = NGauss(A,b)
+n = length(b);
+% Below we are performing Gaussian elimination, to attain an upper triangular matrix
+
+%spans through the matrix
+for k=1:n-1
+    %spans through rows of the matrix
+    for i=k+1:n
+      % spans through the colums of the matrix
+        for j=k:n
+            %calculates the aij scalar component of the matrix based on current row and first row
+            %recalculates the scalars found on each row to attain the upper triangular matrix
+            A(i,j) = A(i,j) - (A(i,k)/A(k,k))*A(k,j);
+        end
+        %recalculates the values that the linear equations are equal to
+        b(i) = b(i) - (A(i,k)/A(k,k))*b(k);
+    end
+end
+
+
+
+% Back substitution to solve the system of linear equations
+% solves the last linear equation corresponding to the last row of the triangular matrix
+x(n) = b(n)/A(n,n);
+% the loop moves from n-1 to  1 by reducing i by one each iteration
+% starting at the n-1 row of the triangular matrix we solve for the unknown x value
+for i=n-1:-1:1
+    % represents the sum of the product of the other solved varaibles and the coefficients
+    sum = 0;
+    % substitutes the other vairables multiplies them by their corresponding coefficients and adds them together
+    for j=i+1:n
+        sum = sum + A(i,j)*x(j);
+    end
+    % solves for unknown vairable with respect to the substituded values (their sum)
+    x(i) = ( b(i) - sum )/A(i,i);
+end
+
+
+
+% the code below corresponds to an artificial example using the geometric series
+% Clears console
+clear;
+% this loops constructs both the matrix corresponding to the (1+i)^(j -1) (where i corresponds to the row) calculation whose coefficients are one say p(1 + i) = 1 + 1 + i + (1 + i)^2 + ....
+% and the vector corresponding to the solution of the polynomial
+for n=1:10
+    % loop specifically populates the matrix, where each component corresponds to the that rows polinomials jth term
+    for i=1:n
+        for j=1:n
+            A(i,j) = (1 + i)^(j-1);
+        end
+    % calculates the solution of the polynomial using the geomtric formula
+    b(i)= ((i+1)^n - 1) / i;
+end
+% solves for the coefficients of the polynomial which should solve (each one) to the number 1
+x = NGauss(A, b), pause
+end
